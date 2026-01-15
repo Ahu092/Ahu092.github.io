@@ -47,17 +47,18 @@ const FUN_FACTS = [
 ];
 
 // Sample/fallback data for when API fails
+// Calibrated so typical day ~35-45, bad day ~60-75, disaster ~80+
 const SAMPLE_DATA = {
-    'Port Washington': { avgDelay: 8.5, delayedTrains: 156, cancelledTrains: 12, worstDelay: 47, miseryScore: 73 },
-    'Oyster Bay': { avgDelay: 7.2, delayedTrains: 98, cancelledTrains: 8, worstDelay: 38, miseryScore: 65 },
-    'Ronkonkoma': { avgDelay: 9.8, delayedTrains: 234, cancelledTrains: 21, worstDelay: 62, miseryScore: 82 },
-    'Montauk': { avgDelay: 11.3, delayedTrains: 87, cancelledTrains: 15, worstDelay: 89, miseryScore: 78 },
-    'Long Beach': { avgDelay: 6.4, delayedTrains: 112, cancelledTrains: 6, worstDelay: 31, miseryScore: 58 },
-    'Hempstead': { avgDelay: 7.8, delayedTrains: 145, cancelledTrains: 11, worstDelay: 42, miseryScore: 68 },
-    'Babylon': { avgDelay: 10.2, delayedTrains: 278, cancelledTrains: 24, worstDelay: 71, miseryScore: 85 },
-    'Far Rockaway': { avgDelay: 6.9, delayedTrains: 89, cancelledTrains: 7, worstDelay: 35, miseryScore: 61 },
-    'West Hempstead': { avgDelay: 7.5, delayedTrains: 67, cancelledTrains: 5, worstDelay: 29, miseryScore: 59 },
-    'City Terminal Zone': { avgDelay: 12.1, delayedTrains: 312, cancelledTrains: 28, worstDelay: 95, miseryScore: 91 }
+    'Port Washington': { avgDelay: 4.2, delayedTrains: 45, cancelledTrains: 2, worstDelay: 18, miseryScore: 38 },
+    'Oyster Bay': { avgDelay: 3.8, delayedTrains: 32, cancelledTrains: 1, worstDelay: 15, miseryScore: 34 },
+    'Ronkonkoma': { avgDelay: 5.5, delayedTrains: 78, cancelledTrains: 4, worstDelay: 28, miseryScore: 47 },
+    'Montauk': { avgDelay: 6.2, delayedTrains: 42, cancelledTrains: 3, worstDelay: 35, miseryScore: 44 },
+    'Long Beach': { avgDelay: 3.5, delayedTrains: 38, cancelledTrains: 1, worstDelay: 14, miseryScore: 32 },
+    'Hempstead': { avgDelay: 4.8, delayedTrains: 52, cancelledTrains: 2, worstDelay: 22, miseryScore: 41 },
+    'Babylon': { avgDelay: 5.8, delayedTrains: 95, cancelledTrains: 5, worstDelay: 32, miseryScore: 52 },
+    'Far Rockaway': { avgDelay: 4.0, delayedTrains: 35, cancelledTrains: 1, worstDelay: 16, miseryScore: 35 },
+    'West Hempstead': { avgDelay: 3.6, delayedTrains: 28, cancelledTrains: 1, worstDelay: 12, miseryScore: 31 },
+    'City Terminal Zone': { avgDelay: 6.5, delayedTrains: 110, cancelledTrains: 6, worstDelay: 42, miseryScore: 58 }
 };
 
 const SAMPLE_CAUSES = [
@@ -116,6 +117,16 @@ async function fetchLiveData() {
         // Continue with sample data - already loaded
     }
 
+    // Update badge to show data source
+    const badge = document.getElementById('dataBadge');
+    if (isUsingLiveData) {
+        badge.textContent = 'LIVE DATA';
+        badge.title = 'Real-time data from NY Open Data';
+    } else {
+        badge.textContent = 'SAMPLE DATA';
+        badge.title = 'Using sample data (API unavailable)';
+    }
+
     updateDisplay();
 }
 
@@ -157,11 +168,14 @@ function processLiveData(data) {
             const worstDelay = Math.max(...delays);
 
             // Calculate misery score (weighted formula)
+            // Calibrated: typical day ~35-45, bad day ~60-75, disaster ~80+
+            const delayRatio = delays.length / stats.totalTrains;
             const miseryScore = Math.min(100, Math.round(
-                (avgDelay * 3) +
-                (delays.length / stats.totalTrains * 50) +
-                (stats.cancelledCount * 2) +
-                (worstDelay / 10)
+                (avgDelay * 1.5) +                    // 5 min avg = 7.5 pts
+                (delayRatio * 25) +                   // 20% delayed = 5 pts
+                (stats.cancelledCount * 0.8) +        // 5 cancelled = 4 pts
+                (worstDelay / 8) +                    // 40 min worst = 5 pts
+                15                                     // Base misery (it's LIRR after all)
             ));
 
             branchData[branch] = {
@@ -226,6 +240,9 @@ function selectBranch(branch) {
 function updateDisplay() {
     const data = branchData[currentBranch] || SAMPLE_DATA['Port Washington'];
 
+    // Update hero answer based on overall misery
+    updateHeroAnswer(data.miseryScore);
+
     // Update branch scores on buttons
     Object.keys(branchData).forEach(branch => {
         const scoreEl = document.getElementById(`score-${branch.replace(/\s/g, '-')}`);
@@ -258,6 +275,34 @@ function updateDisplay() {
 
     // Update share text
     updateShareText(data.miseryScore);
+}
+
+// Update hero answer based on misery score
+function updateHeroAnswer(score) {
+    const answerText = document.querySelector('.answer-text');
+    const answerSubtext = document.querySelector('.answer-subtext');
+
+    let answer, subtext;
+
+    if (score >= 80) {
+        answer = 'DISASTER';
+        subtext = '(abandon all hope)';
+    } else if (score >= 65) {
+        answer = 'YES';
+        subtext = '(very much so)';
+    } else if (score >= 50) {
+        answer = 'KINDA';
+        subtext = '(par for the course)';
+    } else if (score >= 35) {
+        answer = 'MEH';
+        subtext = '(tolerable... barely)';
+    } else {
+        answer = 'NOT BAD';
+        subtext = '(suspicious...)';
+    }
+
+    answerText.textContent = answer;
+    answerSubtext.textContent = subtext;
 }
 
 // Update misery meter
@@ -306,31 +351,31 @@ function updateStatCard(id, value, context) {
 function getSnarkyComment(type, value) {
     const comments = {
         avgDelay: [
-            { threshold: 15, comment: "Might as well walk" },
-            { threshold: 10, comment: "Coffee's getting cold" },
-            { threshold: 7, comment: "Fashionably late, always" },
-            { threshold: 5, comment: "Could be worse... barely" },
-            { threshold: 0, comment: "A miracle!" }
+            { threshold: 12, comment: "Might as well walk" },
+            { threshold: 8, comment: "Coffee's getting cold" },
+            { threshold: 5, comment: "Fashionably late, always" },
+            { threshold: 3, comment: "Could be worse... barely" },
+            { threshold: 0, comment: "A minor miracle!" }
         ],
         delayedTrains: [
-            { threshold: 200, comment: "They're more delayed than not" },
-            { threshold: 150, comment: "That's a lot of sighing" },
-            { threshold: 100, comment: "Par for the course" },
-            { threshold: 50, comment: "Almost acceptable" },
+            { threshold: 100, comment: "They're more delayed than not" },
+            { threshold: 70, comment: "That's a lot of sighing" },
+            { threshold: 50, comment: "Par for the course" },
+            { threshold: 30, comment: "Almost acceptable" },
             { threshold: 0, comment: "Suspiciously low" }
         ],
         cancelledTrains: [
-            { threshold: 20, comment: "Ghost trains" },
-            { threshold: 15, comment: "Now you see them, now you don't" },
-            { threshold: 10, comment: "Poof, gone!" },
-            { threshold: 5, comment: "Some survived" },
-            { threshold: 0, comment: "They actually ran?" }
+            { threshold: 10, comment: "Ghost trains everywhere" },
+            { threshold: 6, comment: "Now you see them, now you don't" },
+            { threshold: 4, comment: "Poof, a few vanished" },
+            { threshold: 2, comment: "Just a couple ghosts" },
+            { threshold: 0, comment: "They actually all ran?" }
         ],
         worstDelay: [
-            { threshold: 60, comment: "Someone aged waiting" },
-            { threshold: 45, comment: "Movie-length delay" },
-            { threshold: 30, comment: "Could've made dinner" },
-            { threshold: 15, comment: "Just enough to ruin plans" },
+            { threshold: 45, comment: "Someone aged waiting" },
+            { threshold: 30, comment: "Movie-length delay" },
+            { threshold: 20, comment: "Could've made dinner" },
+            { threshold: 10, comment: "Just enough to ruin plans" },
             { threshold: 0, comment: "Getting lucky" }
         ]
     };
