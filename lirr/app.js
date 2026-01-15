@@ -94,8 +94,10 @@ async function fetchLiveData() {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const dateStr = thirtyDaysAgo.toISOString().split('T')[0];
 
+        // Properly encode the query
+        const query = encodeURIComponent(`date >= '${dateStr}'`);
         const response = await fetch(
-            `${API_BASE}?$where=date >= '${dateStr}'&$limit=5000`,
+            `${API_BASE}?$where=${query}&$limit=5000`,
             {
                 headers: {
                     'Accept': 'application/json'
