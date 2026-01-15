@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro-North Misery Index | Signal Problem</title>
+    <meta name="description" content="Track Metro-North delays by line. See how miserable your commute really is.">
+
+    <!-- Open Graph for viral sharing -->
+    <meta property="og:title" content="Is Metro-North Miserable Today?">
+    <meta property="og:description" content="The 'nicer' railroad. Still has signal problems though.">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Is Metro-North Miserable Today?">
+    <meta name="twitter:description" content="The 'nicer' railroad. Check your line's misery score.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="back-link">← Signal Problem</a>
+        <span class="nav-divider">|</span>
+        <span class="current-page">Metro-North</span>
+    </nav>
+    <div class="container">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-badge" id="dataBadge">LOADING...</div>
+            <h1 class="hero-title">Is Metro-North Miserable Today?</h1>
+            <div class="hero-answer" id="heroAnswer">
+                <span class="answer-text">...</span>
+                <span class="answer-subtext">(calculating misery)</span>
+            </div>
+        </header>
+
+        <!-- Misery Index -->
+        <section class="misery-index">
+            <h2>Current Misery Index</h2>
+            <div class="misery-meter">
+                <div class="meter-bar">
+                    <div class="meter-fill" id="miseryFill"></div>
+                    <div class="meter-marker" id="miseryMarker"></div>
+                </div>
+                <div class="meter-labels">
+                    <span>Bearable</span>
+                    <span>Annoying</span>
+                    <span>Miserable</span>
+                    <span>Apocalyptic</span>
+                </div>
+            </div>
+            <div class="misery-score" id="miseryScore">
+                <span class="score-value">--</span>
+                <span class="score-label">/ 100</span>
+            </div>
+        </section>
+
+        <!-- Line Selector -->
+        <section class="branch-selector">
+            <h2>Select Your Line of Suffering</h2>
+            <div class="branch-grid" id="branchGrid">
+                <!-- Lines will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Stats Dashboard -->
+        <section class="stats-dashboard" id="statsDashboard">
+            <h2 class="branch-title">
+                <span id="selectedBranchName">Hudson Line</span>
+                <span class="branch-nickname" id="branchNickname"></span>
+            </h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value" id="avgDelay">--</div>
+                    <div class="stat-label">Avg. Delay (mins)</div>
+                    <div class="stat-context" id="avgDelayContext"></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value" id="delayedTrains">--</div>
+                    <div class="stat-label">Delayed Trains (This Month)</div>
+                    <div class="stat-context" id="delayedTrainsContext"></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💀</div>
+                    <div class="stat-value" id="cancelledTrains">--</div>
+                    <div class="stat-label">Cancelled Trains</div>
+                    <div class="stat-context" id="cancelledTrainsContext"></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">😤</div>
+                    <div class="stat-value" id="worstDelay">--</div>
+                    <div class="stat-label">Worst Delay (mins)</div>
+                    <div class="stat-context" id="worstDelayContext"></div>
+                </div>
+            </div>
+
+            <!-- Time Wasted Calculator -->
+            <div class="time-wasted">
+                <h3>Your Time Wasted</h3>
+                <div class="time-calculator">
+                    <label for="commuteFreq">How often do you commute?</label>
+                    <select id="commuteFreq">
+                        <option value="5">5 days/week (Full masochist)</option>
+                        <option value="4">4 days/week (Hybrid hopeful)</option>
+                        <option value="3">3 days/week (Living the dream)</option>
+                        <option value="2">2 days/week (Lucky)</option>
+                        <option value="1">1 day/week (Why bother?)</option>
+                    </select>
+                </div>
+                <div class="time-results">
+                    <div class="time-stat">
+                        <span class="time-value" id="yearlyHours">--</span>
+                        <span class="time-label">Hours wasted per year</span>
+                    </div>
+                    <div class="time-stat">
+                        <span class="time-value" id="yearlyMoney">$--</span>
+                        <span class="time-label">Worth of your time (at $50/hr)</span>
+                    </div>
+                    <div class="time-stat">
+                        <span class="time-value" id="couldHave">--</span>
+                        <span class="time-label" id="couldHaveLabel">Netflix episodes you could've watched</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Delay Causes Chart -->
+        <section class="delay-causes">
+            <h2>Why Is Your Train Late?</h2>
+            <p class="causes-subtitle">Excuses, ranked by frequency</p>
+            <div class="causes-chart" id="causesChart">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Line Leaderboard -->
+        <section class="leaderboard">
+            <h2>Line Misery Leaderboard</h2>
+            <p class="leaderboard-subtitle">All lines, ranked by suffering</p>
+            <div class="leaderboard-table" id="leaderboardTable">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Share Section -->
+        <section class="share-section">
+            <h2>Share Your Misery</h2>
+            <p>Misery loves company. Let others know about the MNR experience.</p>
+            <div class="share-buttons">
+                <button class="share-btn twitter" onclick="shareTwitter()">
+                    Share on X/Twitter
+                </button>
+                <button class="share-btn copy" onclick="copyLink()">
+                    Copy Link
+                </button>
+            </div>
+            <div class="share-preview" id="sharePreview">
+                <p id="shareText">"My Metro-North line has a Misery Index of 35/100. How's yours?"</p>
+            </div>
+        </section>
+
+        <!-- Fun Facts -->
+        <section class="fun-facts">
+            <h2>Metro-North Fun Facts</h2>
+            <div class="facts-carousel" id="factsCarousel">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Data from <a href="https://data.ny.gov" target="_blank">NY Open Data</a> (MTA Metro-North Dataset)</p>
+            <p class="disclaimer">This site is for entertainment and commiseration purposes. Not affiliated with the MTA.</p>
+            <p class="footer-joke">"The next train to Grand Central is... delayed."</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

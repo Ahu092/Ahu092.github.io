@@ -1,8 +1,8 @@
-/* LIRR Misery Tracker Styles */
+/* NJ Transit Misery Tracker Styles */
 
 :root {
-    --misery-red: #dc3545;
-    --misery-orange: #fd7e14;
+    --misery-red: #d93a30;
+    --misery-orange: #ff6b35;
     --misery-yellow: #ffc107;
     --misery-green: #28a745;
     --bg-dark: #0f0f0f;
@@ -12,7 +12,7 @@
     --text-secondary: #9ca3af;
     --text-muted: #6b7280;
     --border-color: #333;
-    --gradient-misery: linear-gradient(135deg, #dc3545 0%, #fd7e14 50%, #ffc107 100%);
+    --gradient-misery: linear-gradient(135deg, #d93a30 0%, #ff6b35 50%, #ffc107 100%);
 }
 
 * {
@@ -27,6 +27,37 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
+}
+
+/* Top Navigation */
+.top-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.back-link {
+    color: var(--misery-yellow);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--misery-orange);
+}
+
+.nav-divider {
+    color: var(--text-muted);
+}
+
+.current-page {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
 }
 
 .container {
