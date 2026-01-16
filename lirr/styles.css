@@ -761,6 +761,171 @@ body {
     }
 }
 
+/* Prediction Section */
+.prediction-section {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border-color);
+}
+
+.prediction-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+}
+
+.prediction-card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.prediction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.weather-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.weather-emoji {
+    font-size: 2.5rem;
+}
+
+.weather-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-temp {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.weather-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.prediction-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+.risk-display {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.risk-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-dark);
+    border: 4px solid var(--border-color);
+    flex-shrink: 0;
+    transition: border-color 0.3s ease;
+}
+
+.risk-circle.risk-minimal { border-color: var(--misery-green); }
+.risk-circle.risk-low { border-color: var(--misery-yellow); }
+.risk-circle.risk-moderate { border-color: var(--misery-orange); }
+.risk-circle.risk-high { border-color: var(--misery-red); }
+
+.risk-score {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.risk-minimal .risk-score { color: var(--misery-green); }
+.risk-low .risk-score { color: var(--misery-yellow); }
+.risk-moderate .risk-score { color: var(--misery-orange); }
+.risk-high .risk-score { color: var(--misery-red); }
+
+.risk-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+.risk-info {
+    flex-grow: 1;
+}
+
+.risk-level-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.risk-recommendation {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.risk-factors {
+    background: var(--bg-dark);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.risk-factors h4 {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.factor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+}
+
+.factor-item {
+    text-align: center;
+    padding: 10px;
+}
+
+.factor-icon {
+    font-size: 1.25rem;
+    margin-bottom: 5px;
+}
+
+.factor-name {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 3px;
+}
+
+.factor-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
 /* Easter egg: konami code activated state */
 .konami-active .answer-text {
     animation: rainbow 1s linear infinite;

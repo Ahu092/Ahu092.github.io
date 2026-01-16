@@ -60,6 +60,65 @@
             </div>
         </section>
 
+        <!-- Disruption Forecast -->
+        <section class="prediction-section" id="predictionSection">
+            <h2>🔮 Today's Disruption Forecast</h2>
+            <div class="prediction-card">
+                <div class="prediction-header">
+                    <div class="weather-info" id="weatherInfo">
+                        <span class="weather-emoji">🌡️</span>
+                        <span class="weather-temp">--°F</span>
+                        <span class="weather-desc">Loading...</span>
+                    </div>
+                    <div class="prediction-time" id="predictionTime">
+                        Updated: --
+                    </div>
+                </div>
+
+                <div class="risk-display">
+                    <div class="risk-circle" id="riskCircle">
+                        <span class="risk-value" id="riskValue">--</span>
+                        <span class="risk-label">Risk Score</span>
+                    </div>
+                    <div class="risk-info">
+                        <div class="risk-level" id="riskLevel">
+                            <span class="risk-emoji">⏳</span>
+                            <span class="risk-text">Calculating...</span>
+                        </div>
+                        <p class="risk-recommendation" id="riskRecommendation">
+                            Analyzing conditions...
+                        </p>
+                    </div>
+                </div>
+
+                <div class="risk-factors" id="riskFactors">
+                    <h4>Risk Factors</h4>
+                    <div class="factor-grid">
+                        <div class="factor">
+                            <span class="factor-icon">🌧️</span>
+                            <span class="factor-name">Weather</span>
+                            <span class="factor-value" id="factorWeather">--</span>
+                        </div>
+                        <div class="factor">
+                            <span class="factor-icon">📅</span>
+                            <span class="factor-name">Day</span>
+                            <span class="factor-value" id="factorDay">--</span>
+                        </div>
+                        <div class="factor">
+                            <span class="factor-icon">🕐</span>
+                            <span class="factor-name">Time</span>
+                            <span class="factor-value" id="factorTime">--</span>
+                        </div>
+                        <div class="factor">
+                            <span class="factor-icon">📊</span>
+                            <span class="factor-name">History</span>
+                            <span class="factor-value" id="factorHistory">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Branch Selector -->
         <section class="branch-selector">
             <h2>Select Your Branch of Suffering</h2>
@@ -186,6 +245,7 @@
         </footer>
     </div>
 
+    <script src="../shared/prediction.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

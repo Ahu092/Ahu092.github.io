@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchLiveData();
     updateDisplay();
     initKonamiCode();
+    loadPrediction();
 });
 
 // Fetch live data from NY Open Data API
@@ -250,6 +251,7 @@ function selectBranch(branch) {
     event.target.closest('.branch-btn').classList.add('active');
 
     updateDisplay();
+    loadPrediction();
 
     // Smooth scroll to stats
     document.getElementById('statsDashboard').scrollIntoView({ behavior: 'smooth' });
@@ -565,6 +567,77 @@ function initKonamiCode() {
             konamiIndex = 0;
         }
     });
+}
+
+// Load and display disruption prediction
+async function loadPrediction() {
+    try {
+        // Check if prediction engine is loaded
+        if (!window.DisruptionPredictor) {
+            console.log('Prediction engine not loaded');
+            return;
+        }
+
+        const prediction = await window.DisruptionPredictor.getPrediction(currentBranch, 'lirr');
+        updatePredictionDisplay(prediction);
+    } catch (error) {
+        console.log('Prediction failed:', error.message);
+    }
+}
+
+// Update prediction UI
+function updatePredictionDisplay(prediction) {
+    if (!prediction) return;
+
+    // Update weather info
+    const weatherInfo = document.getElementById('weatherInfo');
+    if (prediction.weather) {
+        weatherInfo.innerHTML = `
+            <span class="weather-emoji">${prediction.weather.emoji}</span>
+            <div class="weather-details">
+                <span class="weather-temp">${prediction.weather.temperature}</span>
+                <span class="weather-desc">${prediction.weather.description}</span>
+            </div>
+        `;
+    }
+
+    // Update timestamp
+    const predictionTime = document.getElementById('predictionTime');
+    const now = new Date();
+    predictionTime.textContent = `Updated: ${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+    // Update risk circle
+    const riskCircle = document.getElementById('riskCircle');
+    const riskLevel = prediction.riskLevel;
+
+    // Set risk class
+    riskCircle.className = 'risk-circle';
+    if (prediction.overall >= 70) riskCircle.classList.add('risk-high');
+    else if (prediction.overall >= 50) riskCircle.classList.add('risk-moderate');
+    else if (prediction.overall >= 35) riskCircle.classList.add('risk-low');
+    else riskCircle.classList.add('risk-minimal');
+
+    riskCircle.innerHTML = `
+        <span class="risk-score">${prediction.overall}</span>
+        <span class="risk-label">Risk Score</span>
+    `;
+
+    // Update risk level text
+    const riskLevelEl = document.getElementById('riskLevel');
+    riskLevelEl.innerHTML = `
+        <span class="risk-emoji">${riskLevel.emoji}</span>
+        <span class="risk-level-text" style="color: ${riskLevel.color}">${riskLevel.label}</span>
+    `;
+
+    // Update recommendation
+    document.getElementById('riskRecommendation').textContent = prediction.recommendation;
+
+    // Update risk factors
+    const factors = prediction.factors;
+    document.getElementById('factorWeather').textContent = factors.weather;
+    document.getElementById('factorDay').textContent = factors.dayOfWeek;
+    document.getElementById('factorTime').textContent = factors.timeOfDay;
+    document.getElementById('factorHistory').textContent = factors.baseline;
 }
 
 // Make functions available globally for onclick handlers
