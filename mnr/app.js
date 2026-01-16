@@ -1,6 +1,6 @@
 // Metro-North Misery Tracker - Main Application
 
-const API_BASE = 'https://data.ny.gov/resource/pz6f-jsc3.json';
+const API_BASE = 'https://data.ny.gov/resource/f462-ka72.json';
 
 // Metro-North Lines with fun nicknames
 const LINES = {
@@ -133,11 +133,19 @@ function processLiveData(data) {
     const lineStats = {};
     const causeCounts = {};
 
+    // Log first record to debug field names
+    if (data.length > 0) {
+        console.log('Sample record fields:', Object.keys(data[0]));
+        console.log('Sample record:', data[0]);
+    }
+
     data.forEach(record => {
-        const line = record.line || record.branch || 'Unknown';
-        const delay = parseFloat(record.delay_minutes) || 0;
-        const isCancelled = record.cancelled === 'Y' || record.cancelled === 'true';
-        const cause = record.delay_category || 'Unknown';
+        // Try various field name formats
+        const line = record.line || record.Line || record.branch || record.Branch || 'Unknown';
+        const delay = parseFloat(record.delay_minutes || record.delay || record.minutes_late || record.Delay || 0);
+        const isCancelled = (record.cancelled || record.Cancelled || record.status || '')
+            .toString().toUpperCase().includes('CANCEL');
+        const cause = record.delay_category || record.cause || record.reason || record.Cause || 'Unknown';
 
         if (!lineStats[line]) {
             lineStats[line] = {

@@ -144,12 +144,20 @@ function processLiveData(data) {
     const branchStats = {};
     const causeCounts = {};
 
+    // Log first record to debug field names
+    if (data.length > 0) {
+        console.log('Sample record fields:', Object.keys(data[0]));
+        console.log('Sample record:', data[0]);
+    }
+
     // Group data by branch
     data.forEach(record => {
-        const branch = record.branch || 'Unknown';
-        const delay = parseFloat(record.delay_minutes) || 0;
-        const isCancelled = record.cancelled === 'Y' || record.cancelled === 'true';
-        const cause = record.delay_category || 'Unknown';
+        // Try various field name formats (Socrata can use different naming conventions)
+        const branch = record.branch || record.Branch || record.line || record.Line || 'Unknown';
+        const delay = parseFloat(record.delay_minutes || record.delay || record.minutes_late || record.Delay || 0);
+        const isCancelled = (record.cancelled || record.Cancelled || record.status || '')
+            .toString().toUpperCase().includes('CANCEL');
+        const cause = record.delay_category || record.cause || record.reason || record.Cause || 'Unknown';
 
         if (!branchStats[branch]) {
             branchStats[branch] = {
@@ -164,7 +172,9 @@ function processLiveData(data) {
         if (isCancelled) branchStats[branch].cancelledCount++;
 
         // Track causes
-        causeCounts[cause] = (causeCounts[cause] || 0) + 1;
+        if (cause && cause !== 'Unknown') {
+            causeCounts[cause] = (causeCounts[cause] || 0) + 1;
+        }
     });
 
     // Calculate stats for each branch
